@@ -11,43 +11,12 @@ import { ArticleEditPage } from "./page/article-edit";
 import { ArticlePage } from "./page/artcle";
 import { ProfilePage } from "./page/profile";
 import { ProfileFavoritePage } from "./page/profile-favorite";
+import { Layout } from "./view/layout";
 
 function App() {
   return (
     <HashRouter>
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/login">Sign in</Link>
-            </li>
-            <li>
-              <Link to="/register">Sign up</Link>
-            </li>
-            <li>
-              <Link to="/settings">Setting</Link>
-            </li>
-            <li>
-              <Link to="/editor">New Article</Link>
-            </li>
-            <li>
-              <Link to="/editor/slug">Edit Article</Link>
-            </li>
-            <li>
-              <Link to="/article/article-slug-here">Show Article</Link>
-            </li>
-            <li>
-              <Link to="/profile/username">Profile</Link>
-            </li>
-            <li>
-              <Link to="/profile/username/favorites">Favorites</Link>
-            </li>
-          </ul>
-        </nav>
-
+      <Layout>
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route exact path="/login" component={SignInPage} />
@@ -70,7 +39,7 @@ function App() {
             <NotFoundPage />
           </Route>
         </Switch>
-      </div>
+      </Layout>
     </HashRouter>
   );
 }
