@@ -1,26 +1,77 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import { HashRouter, Link, Route, Switch } from "react-router-dom";
+import { HomePage } from "./page/home";
+import { NotFoundPage } from "./page/not-found";
+import { SignInPage } from "./page/sign-in";
+import { SignUpPage } from "./page/sign-up";
+import { SettingPage } from "./page/setting";
+import { ArticleCreatePage } from "./page/article-create";
+import { ArticleEditPage } from "./page/article-edit";
+import { ArticlePage } from "./page/artcle";
+import { ProfilePage } from "./page/profile";
+import { ProfileFavoritePage } from "./page/profile-favorite";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <HashRouter>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/login">Sign in</Link>
+            </li>
+            <li>
+              <Link to="/register">Sign up</Link>
+            </li>
+            <li>
+              <Link to="/settings">Setting</Link>
+            </li>
+            <li>
+              <Link to="/editor">New Article</Link>
+            </li>
+            <li>
+              <Link to="/editor/slug">Edit Article</Link>
+            </li>
+            <li>
+              <Link to="/article/article-slug-here">Show Article</Link>
+            </li>
+            <li>
+              <Link to="/profile/username">Profile</Link>
+            </li>
+            <li>
+              <Link to="/profile/username/favorites">Favorites</Link>
+            </li>
+          </ul>
+        </nav>
+
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route exact path="/login" component={SignInPage} />
+          <Route exact path="/register" component={SignUpPage} />
+          <Route exact path="/settings" component={SettingPage} />
+          <Route exact path="/editor" component={ArticleCreatePage} />
+          <Route exact path="/editor/slug" component={ArticleEditPage} />
+          <Route
+            exact
+            path="/article/article-slug-here"
+            component={ArticlePage}
+          />
+          <Route exact path="/profile/username" component={ProfilePage} />
+          <Route
+            exact
+            path="/profile/username/favorites"
+            component={ProfileFavoritePage}
+          />
+          <Route path="/">
+            <NotFoundPage />
+          </Route>
+        </Switch>
+      </div>
+    </HashRouter>
   );
 }
-
 export default App;
