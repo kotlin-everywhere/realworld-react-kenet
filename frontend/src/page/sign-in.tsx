@@ -1,7 +1,15 @@
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { Link } from "react-router-dom";
+import { Api } from "../api/api";
 
 export function SignInPage(): ReactElement {
+  const [email, setEmail] = useState("");
+  const onSignIn = async () => {
+    const api = new Api("http://localhost:5000");
+    const greeting = await api.greeting(email);
+    alert(greeting);
+  };
+
   return (
     <div className="auth-page">
       <div className="container page">
@@ -22,6 +30,8 @@ export function SignInPage(): ReactElement {
                   className="form-control form-control-lg"
                   type="text"
                   placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </fieldset>
               <fieldset className="form-group">
@@ -31,7 +41,10 @@ export function SignInPage(): ReactElement {
                   placeholder="Password"
                 />
               </fieldset>
-              <button className="btn btn-lg btn-primary pull-xs-right">
+              <button
+                className="btn btn-lg btn-primary pull-xs-right"
+                onClick={onSignIn}
+              >
                 Sign in
               </button>
             </form>
