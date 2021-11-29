@@ -2,6 +2,7 @@ package org.kotlin.everywhere.realworld
 
 import org.kotlin.everywhere.net.HttpServerEngine
 import org.kotlin.everywhere.net.createServer
+import org.kotlin.everywhere.net.gen.typescript.TypeScript
 import org.kotlin.everywhere.net.gen.typescript.generate
 import java.nio.file.Path
 
@@ -12,7 +13,7 @@ suspend fun main(args: Array<String>) {
 
     when (command) {
         is Generate -> {
-            generate(api, Path.of(command.destination), "api")
+            generate(api, Path.of(command.destination), "api", TypeScript)
         }
         is Serve -> {
             createServer(api, HttpServerEngine()).launch(command.port)

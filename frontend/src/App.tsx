@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { HashRouter, Link, Route, Switch } from "react-router-dom";
+import { HashRouter, Route, Switch } from "react-router-dom";
 import { HomePage } from "./page/home";
 import { NotFoundPage } from "./page/not-found";
 import { SignInPage } from "./page/sign-in";

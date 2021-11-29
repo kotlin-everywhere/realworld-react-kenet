@@ -1,7 +1,9 @@
 import { PropsWithChildren, ReactElement } from "react";
 import { Link, useRouteMatch } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+import { siteModel } from "../model";
 
-export function Layout(props: PropsWithChildren<{}>): ReactElement {
+export const Layout = observer((props: PropsWithChildren<{}>) => {
   return (
     <div>
       <nav className="navbar navbar-light">
@@ -11,10 +13,17 @@ export function Layout(props: PropsWithChildren<{}>): ReactElement {
           </Link>
           <ul className="nav navbar-nav pull-xs-right">
             <NavItem to="/" label="Home" />
-            <NavItem to="/editor" label="New Article" icon="ion-compose" />
-            <NavItem to="/settings" label="Settings" icon="ion-gear-a" />
-            <NavItem to="/login" label="Sign in" />
-            <NavItem to="/register" label="Sign up" />
+            {siteModel.user ? (
+              <>
+                <NavItem to="/editor" label="New Article" icon="ion-compose" />
+                <NavItem to="/settings" label="Settings" icon="ion-gear-a" />
+              </>
+            ) : (
+              <>
+                <NavItem to="/login" label="Sign in" />
+                <NavItem to="/register" label="Sign up" />
+              </>
+            )}
           </ul>
         </div>
       </nav>
@@ -33,7 +42,7 @@ export function Layout(props: PropsWithChildren<{}>): ReactElement {
       </footer>
     </div>
   );
-}
+});
 
 function NavItem(props: {
   to: string;

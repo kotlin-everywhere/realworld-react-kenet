@@ -1,13 +1,27 @@
 import { ReactElement, useState } from "react";
-import { Link } from "react-router-dom";
-import { Api } from "../api/api";
+import { Link, useHistory } from "react-router-dom";
+import { api } from "../api";
+import { siteModel } from "../model";
 
 export function SignInPage(): ReactElement {
+  const history = useHistory();
+
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<string[]>([]);
+
   const onSignIn = async () => {
-    const api = new Api("http://localhost:5000");
-    const greeting = await api.greeting(email);
-    alert(greeting);
+    const res = await api.signIn({ email, password });
+    if (res.errors.length) {
+      setErrors(res.errors);
+      return;
+    }
+    if (!res.data) {
+      return;
+    }
+
+    siteModel.setUser(res.data);
+    history.replace({ pathname: "/" });
   };
 
   return (
@@ -20,9 +34,13 @@ export function SignInPage(): ReactElement {
               <Link to="/register">Don't have an account yet? Sign Up</Link>
             </p>
 
-            <ul className="error-messages">
-              <li>That email is already taken</li>
-            </ul>
+            {errors.map((error, index) => {
+              return (
+                <ul className="error-messages" key={index}>
+                  <li>{error}</li>
+                </ul>
+              );
+            })}
 
             <form>
               <fieldset className="form-group">
@@ -39,6 +57,8 @@ export function SignInPage(): ReactElement {
                   className="form-control form-control-lg"
                   type="password"
                   placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </fieldset>
               <button

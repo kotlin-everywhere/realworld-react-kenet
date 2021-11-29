@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.5.31"
+    kotlin("plugin.serialization") version "1.5.31"
     application
 }
 
@@ -20,7 +21,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 
 dependencies {
     // kenet
-    val kenetVersion = "792258caa1"
+    val kenetVersion = "9cc72ddcf7"
     implementation("com.github.kotlin-everywhere.kenet:kenet-server:$kenetVersion")
     implementation("com.github.kotlin-everywhere.kenet:kenet-server-engine-http:$kenetVersion")
     implementation("com.github.kotlin-everywhere.kenet:kenet-gen-typescript:$kenetVersion")
