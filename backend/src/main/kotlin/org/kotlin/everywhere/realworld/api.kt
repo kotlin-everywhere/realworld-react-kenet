@@ -20,6 +20,7 @@ class Api : Kenet() {
     val articleCreate by c<ArticleCreateReq, ArticleCreateRes>()
     val articleEditShow by c<ArticleEditShowReq, ArticleEditShowRes>()
     val articleEdit by c<ArticleEditReq, ArticleEditRes>()
+    val articleShow by c<ArticleShowReq, ArticleShowRes>()
 
     // index
     val feedList by c<FeedListReq, FeedListRes>()
@@ -135,6 +136,24 @@ class ArticleEditReq(
 @Serializable
 class ArticleEditRes(override val errors: List<String> = listOf(), val slug: String? = null) : ErrorsRes
 
+@Serializable
+class ArticleShowReq(val slug: String)
+
+@Serializable
+class ArticleShowRes(val data: Data? = null) {
+    @Serializable
+    class Data(
+        val userPk: Int?,
+        val userName: String?,
+        val userProfilePictureUrl: String?,
+        val pk: Int,
+        val title: String,
+        val description: String,
+        val article: String,
+        val tags: List<String>,
+        val lastUpdatedAt: String,
+    )
+}
 
 @Serializable
 class FeedListReq(val accessToken: String?)
@@ -272,6 +291,22 @@ fun Api.init() {
         article.updatedAt = Date()
 
         ArticleEditRes(slug = article.slug)
+    }
+
+    articleShow { req ->
+        val article = articles.firstOrNull { it.slug == req.slug } ?: return@articleShow ArticleShowRes()
+        val articleUser = users.firstOrNull { it.pk == article.userPk }
+        ArticleShowRes(data = ArticleShowRes.Data(
+            userPk = articleUser?.pk,
+            userName = articleUser?.name,
+            userProfilePictureUrl = articleUser?.profilePictureUrl,
+            pk = article.pk,
+            title = article.title,
+            description = article.description,
+            article = article.article,
+            tags = article.tags,
+            lastUpdatedAt = (article.updatedAt ?: article.createdAt).toString()
+        ))
     }
 
     feedList { req ->
