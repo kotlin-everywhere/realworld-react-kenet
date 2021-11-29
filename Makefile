@@ -6,3 +6,8 @@ docker-run: docker-build
 
 docker-bash: docker-build
 	docker run --name realworld-react-kenet --rm -it realworld-react-kenet bash
+
+
+push:
+	git push
+	git push dokku@mocker.mock.pe.kr:kenet
