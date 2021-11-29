@@ -25,4 +25,5 @@ dependencies {
     implementation("com.github.kotlin-everywhere.kenet:kenet-server:$kenetVersion")
     implementation("com.github.kotlin-everywhere.kenet:kenet-server-engine-http:$kenetVersion")
     implementation("com.github.kotlin-everywhere.kenet:kenet-gen-typescript:$kenetVersion")
+    implementation(kotlin("reflect"))
 }

@@ -12,7 +12,7 @@ export class SiteModel {
   }
 }
 
-interface SiteUser {
+export interface SiteUser {
   accessToken: string;
   profilePictureUrl: string;
   name: string;

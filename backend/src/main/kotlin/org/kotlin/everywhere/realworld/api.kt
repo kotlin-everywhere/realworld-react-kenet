@@ -8,6 +8,7 @@ import java.util.*
 class Api : Kenet() {
     val signUp by c<SignUpReq, SignUpRes>()
     val signIn by c<SignInReq, SignInRes>()
+    val updateProfile by c<UpdateProfileReq, UpdateProfileRes>()
 }
 
 @Serializable
@@ -34,6 +35,39 @@ class SignInRes(val errors: List<String> = listOf(), val data: Data? = null) {
     )
 }
 
+interface AuthorizedReq {
+    val accessToken: String
+}
+
+interface ErrorsRes {
+    val errors: List<String>
+}
+
+inline fun <REQ : AuthorizedReq, reified RES : ErrorsRes> withUser(crossinline handler: (user: User, req: REQ) -> RES): (req: REQ) -> RES {
+    return { req ->
+        val user = users.firstOrNull { it.accessTokens.contains(req.accessToken) }
+        if (user == null) {
+            val constructors = RES::class.constructors
+            constructors.last().call(listOf("Invalid access token"))
+        } else {
+            handler(user, req)
+        }
+    }
+}
+
+@Serializable
+class UpdateProfileReq(
+    override val accessToken: String,
+    val name: String,
+    val note: String,
+    val profilePictureUrl: String,
+    val email: String,
+    val password: String
+) : AuthorizedReq
+
+@Serializable
+class UpdateProfileRes(override var errors: List<String> = listOf()) : ErrorsRes
+
 fun Api.init() {
     signUp { req ->
         val emailTaken = users.any { it.email == req.email }
@@ -50,23 +84,44 @@ fun Api.init() {
 
         val accessToken = UUID.randomUUID().toString()
         user.accessTokens.add(accessToken)
-        SignInRes(data = SignInRes.Data(
-           name = user.name,
-           email = user.email,
-           note = user.note,
-           profilePictureUrl = user.profilePictureUrl,
-           accessToken = accessToken,
-        ))
+        SignInRes(
+            data = SignInRes.Data(
+                name = user.name,
+                email = user.email,
+                note = user.note,
+                profilePictureUrl = user.profilePictureUrl,
+                accessToken = accessToken,
+            )
+        )
     }
+
+    updateProfile(withUser { user, req ->
+        if (req.name.isBlank()) {
+            return@withUser UpdateProfileRes(errors = listOf("Input a name"))
+        }
+
+        if (req.password.isNotBlank()) {
+            if (req.email != user.email) {
+                return@withUser UpdateProfileRes(errors = listOf("invalid email"))
+            }
+            user.password = req.password
+        }
+
+        user.name = req.name
+        user.note = req.note
+        user.profilePictureUrl = req.profilePictureUrl
+
+        UpdateProfileRes()
+    })
 }
 
 data class User(
-    val name: String,
+    var name: String,
     val email: String,
-    val password: String,
+    var password: String,
     val accessTokens: MutableList<String> = mutableListOf(),
-    val note: String = "",
-    val profilePictureUrl: String = "",
+    var note: String = "",
+    var profilePictureUrl: String = "",
 )
 
-val users = mutableListOf<User>()
+val users = mutableListOf(User(name = "test", email = "admin@example.com", password = "1234"))
