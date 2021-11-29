@@ -24,7 +24,7 @@ WORKDIR /app
 # install & build backend
 COPY backend backend
 RUN --mount=target=/root/.gradle,type=cache \
-    (cd backend && ./gradlew --no-daemon build && build/install/backend/bin/backend generate ../frontend/src/api)
+    (cd backend && ./gradlew --no-daemon installDist && build/install/backend/bin/backend generate ../frontend/src/api)
 
 # install & build frontend
 COPY frontend frontend
