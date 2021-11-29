@@ -1,6 +1,7 @@
 import { Api } from "./api/api";
+import { API_HOST } from "./env";
 
-export const api = new Api("http://localhost:5000");
+export const api = new Api(API_HOST);
 
 export const alertErrors = (errors: string[]) => {
   if (!errors.length) {
