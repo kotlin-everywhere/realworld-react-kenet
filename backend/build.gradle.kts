@@ -21,7 +21,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 
 dependencies {
     // kenet
-    val kenetVersion = "619d409526"
+    val kenetVersion = "dbd92cf3c8"
     implementation("com.github.kotlin-everywhere.kenet:kenet-server:$kenetVersion")
     implementation("com.github.kotlin-everywhere.kenet:kenet-server-engine-http:$kenetVersion")
     implementation("com.github.kotlin-everywhere.kenet:kenet-gen-typescript:$kenetVersion")
