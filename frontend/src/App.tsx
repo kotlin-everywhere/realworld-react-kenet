@@ -23,12 +23,8 @@ function App() {
           <Route exact path="/register" component={SignUpPage} />
           <Route exact path="/settings" component={SettingPage} />
           <Route exact path="/editor" component={ArticleCreatePage} />
-          <Route exact path="/editor/slug" component={ArticleEditPage} />
-          <Route
-            exact
-            path="/article/article-slug-here"
-            component={ArticlePage}
-          />
+          <Route exact path="/editor/:slug" component={ArticleEditPage} />
+          <Route exact path="/article/:slug" component={ArticlePage} />
           <Route exact path="/profile/username" component={ProfilePage} />
           <Route
             exact

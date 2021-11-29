@@ -1,6 +1,41 @@
-import { ReactElement } from "react";
+import { observer } from "mobx-react-lite";
+import { useEffect, useState } from "react";
+import classNames from "classnames";
+import { api } from "../api";
+import { siteModel } from "../model";
+import { Link } from "react-router-dom";
 
-export function HomePage(): ReactElement {
+enum FeedType {
+  USER,
+  GLOBAL,
+}
+
+export const HomePage = observer(() => {
+  const [feedType, setFeedType] = useState(FeedType.GLOBAL);
+  const [feeds, setFeeds] = useState<
+    {
+      description: string;
+      lastUpdatedAt: string;
+      slug: string;
+      title: string;
+      userName: string;
+      userProfilePictureUrl: string;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    api
+      .feedList({
+        accessToken:
+          feedType === FeedType.USER && siteModel.user
+            ? siteModel.user.accessToken
+            : null,
+      })
+      .then((res) => {
+        setFeeds(res.feeds);
+      });
+  }, [feedType]);
+
   return (
     <div className="home-page">
       <div className="banner">
@@ -16,64 +51,62 @@ export function HomePage(): ReactElement {
             <div className="feed-toggle">
               <ul className="nav nav-pills outline-active">
                 <li className="nav-item">
-                  <a className="nav-link disabled" href="">
+                  <button
+                    className={classNames("nav-link", {
+                      active: siteModel.user && feedType === FeedType.USER,
+                      disabled: !siteModel.user || feedType !== FeedType.USER,
+                    })}
+                    onClick={() => {
+                      if (siteModel.user) {
+                        setFeedType(FeedType.USER);
+                      }
+                    }}
+                  >
                     Your Feed
-                  </a>
+                  </button>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link active" href="">
+                  <button
+                    className={classNames("nav-link", {
+                      active: feedType === FeedType.GLOBAL,
+                      disabled: feedType !== FeedType.GLOBAL,
+                    })}
+                    onClick={() => setFeedType(FeedType.GLOBAL)}
+                  >
                     Global Feed
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>
 
-            <div className="article-preview">
-              <div className="article-meta">
-                <a href="profile.html">
-                  <img src="http://i.imgur.com/Qr71crq.jpg" />
-                </a>
-                <div className="info">
-                  <a href="" className="author">
-                    Eric Simons
-                  </a>
-                  <span className="date">January 20th</span>
+            {feeds.map((feed, index) => {
+              return (
+                <div className="article-preview" key={index}>
+                  <div className="article-meta">
+                    <a href="profile.html">
+                      <img src="http://i.imgur.com/Qr71crq.jpg" />
+                    </a>
+                    <div className="info">
+                      <a href="#" className="author">
+                        {feed.userName}
+                      </a>
+                      <span className="date">{feed.lastUpdatedAt}</span>
+                    </div>
+                    <button className="btn btn-outline-primary btn-sm pull-xs-right">
+                      <i className="ion-heart" /> 29
+                    </button>
+                  </div>
+                  <Link
+                    to={{ pathname: `/article/${feed.slug}` }}
+                    className="preview-link"
+                  >
+                    <h1>{feed.title}</h1>
+                    <p>{feed.description}</p>
+                    <span>Read more...</span>
+                  </Link>
                 </div>
-                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart" /> 29
-                </button>
-              </div>
-              <a href="" className="preview-link">
-                <h1>How to build webapps that scale</h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-              </a>
-            </div>
-
-            <div className="article-preview">
-              <div className="article-meta">
-                <a href="profile.html">
-                  <img src="http://i.imgur.com/N4VcUeJ.jpg" />
-                </a>
-                <div className="info">
-                  <a href="" className="author">
-                    Albert Pai
-                  </a>
-                  <span className="date">January 20th</span>
-                </div>
-                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                  <i className="ion-heart" /> 32
-                </button>
-              </div>
-              <a href="" className="preview-link">
-                <h1>
-                  The song you won't ever stop singing. No matter how hard you
-                  try.
-                </h1>
-                <p>This is the description for the post.</p>
-                <span>Read more...</span>
-              </a>
-            </div>
+              );
+            })}
           </div>
 
           <div className="col-md-3">
@@ -112,4 +145,4 @@ export function HomePage(): ReactElement {
       </div>
     </div>
   );
-}
+});

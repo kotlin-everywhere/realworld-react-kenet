@@ -1,9 +1,10 @@
 import { PropsWithChildren, ReactElement } from "react";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { siteModel } from "../model";
 
 export const Layout = observer((props: PropsWithChildren<{}>) => {
+  const history = useHistory();
   return (
     <div>
       <nav className="navbar navbar-light">
@@ -17,6 +18,19 @@ export const Layout = observer((props: PropsWithChildren<{}>) => {
               <>
                 <NavItem to="/editor" label="New Article" icon="ion-compose" />
                 <NavItem to="/settings" label="Settings" icon="ion-gear-a" />
+                <li className="nav-item">
+                  <a
+                    className="nav-link"
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      siteModel.setUser(null);
+                      history.replace({ pathname: "/" });
+                    }}
+                  >
+                    Sign out
+                  </a>
+                </li>
               </>
             ) : (
               <>
